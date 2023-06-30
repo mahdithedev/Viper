@@ -7,6 +7,8 @@ from req import Req
 
 from subprocess import Popen, PIPE
 
+import os
+
 ENV = {
     "HOSTNAME":"127.0.0.1",
     "PORT":3000,
@@ -86,17 +88,8 @@ class Server:
 
     def serve_file(self , client_conn , route):
         try:
-            with open(route , "rb") as file:
-                    try:
-                        while True:
-                            bytes = file.read(self.env["BUFFER_SIZE"])
-
-                            if not bytes:
-                                break
-
-                            client_conn.sendall(bytes)
-                    except Exception as e:
-                        print(e)
+            with open(route , 'rb') as file:
+                    client_conn.sendfile(file)
         except FileNotFoundError:
             client_conn.send(b"HTTP/1.1 404 Not Found\r\n")
         
